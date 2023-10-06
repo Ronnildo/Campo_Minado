@@ -36,4 +36,19 @@ class Game {
   printGame() {
     b.printBoard();
   }
+
+  int getBombs(String s) {
+    switch (s) {
+      case "facil":
+        return 10;
+      case "medio":
+        return 30;
+      case "dificil":
+        return 100;
+      case "":
+        throw ExceptionNivelGame("Error Null value");
+      default:
+        return 0;
+    }
+  }
 }

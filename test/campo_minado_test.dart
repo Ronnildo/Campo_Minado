@@ -19,17 +19,25 @@ void main() {
       expect(res, "facil");
     });
 
+    test('Nível Fácil Test Nuemro de bombas', () {
+      int res = g!.getBombs("facil");
+      expect(res, 10);
+    });
+
     test('Nível Fácil Test 8x8 Size Table', () {
       String? nivel = g!.setNivel("facil");
       int res = g!.getNivelSize(nivel!);
-      expect(res, 64);
+      expect(res, 65);
     });
 
     test('Nível Fácil Test 10x16', () {
       String? res = g!.setNivel("medio");
       expect(res, "medio");
     });
-
+    test('Nível médio Test Nuemro de bombas', () {
+      int res = g!.getBombs("medio");
+      expect(res, 30);
+    });
     test('Nível Fácil Test 10x16 Size Table', () {
       String? nivel = g!.setNivel("medio");
       int res = g!.getNivelSize(nivel!);
@@ -40,7 +48,12 @@ void main() {
       expect(res, "dificil");
     });
 
-    test('Nível Fácil Test 8x8 Size Table', () {
+    test('Nível difícil Test Nuemro de bombas', () {
+      int res = g!.getBombs("dificil");
+      expect(res, 100);
+    });
+
+    test('Nível Fácil Test 24x24 Size Table', () {
       String? nivel = g!.setNivel("dificil");
       int res = g!.getNivelSize(nivel!);
       expect(res, 577);
