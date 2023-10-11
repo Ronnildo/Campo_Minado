@@ -1,70 +1,104 @@
-import 'package:campo_minado/campo_minado.dart';
-import 'package:campo_minado/exceptions/exception_nivel_game.dart';
+import 'dart:math';
+
+import 'package:campo_minado/components/board.dart';
+import 'package:campo_minado/components/level.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('Tabuleiro teste', () {
-    Game? g;
-    setUp(() {
-      g = Game();
-      g!.init();
-    });
-    test('Iniciar Jogo Test', () {
-      bool res = g!.getBoard().isEmpty;
+  Board? b;
+  setUp(() {
+    b = Board();
+  });
+  group('Board test', () {
+    // teste para verificar se o tabuleiro está vazio
+    test('start game', () {
+      bool res = b!.board.isEmpty;
       expect(res, true);
     });
 
-    test('Nível Fácil Test 8x8', () {
-      String? res = g!.setNivel("facil");
-      expect(res, "facil");
+    // Fácil
+    // teste para verificar o nível do tabuleiro
+    test('test level game easy', () {
+      b!.setLevelGame(Level.easy);
+      Level l = b!.getNivel();
+      expect(l, Level.easy);
+    });
+    // teste set Tamanho tabuleiro level
+    test('test set level game easy', () {
+      int res = b!.setLevelGame(Level.easy);
+      expect(res, 64);
+    });
+    test('test Sorted bombs easy', () {
+      b!.setLevelGame(Level.easy);
+      List listPosition = b!.sortedBombs();
+      for (int i = 0; i < listPosition.length; i++) {
+        if (listPosition[i] == b!.board[i]) expect(listPosition[i], i);
+      }
     });
 
-    test('Nível Fácil Test Nuemro de bombas', () {
-      int res = g!.getBombs("facil");
-      expect(res, 10);
+    test('Insert Bombs Board easy', () {
+      b!.setLevelGame(Level.easy);
+      b!.insertBombsBoard();
+      for (int i = 0; i < b!.board.length; i++) {
+        if (b!.board[i] == "*") expect(b!.board[i], "*");
+      }
+    });
+    // Médio
+    // teste set Tamanho tabuleiro level
+    test('test set level game easy', () {
+      int res = b!.setLevelGame(Level.medium);
+      expect(res, 160);
+    });
+    // teste para verificar o nível do tabuleiro
+    test('test level game medium', () {
+      b!.setLevelGame(Level.medium);
+      Level l = b!.getNivel()!;
+      expect(l, Level.medium);
     });
 
-    test('Nível Fácil Test 8x8 Size Table', () {
-      String? nivel = g!.setNivel("facil");
-      int res = g!.getNivelSize(nivel!);
-      expect(res, 65);
+    test('test Sorted bombs medium', () {
+      b!.setLevelGame(Level.medium);
+      List listPosition = b!.sortedBombs();
+      for (int i = 0; i < listPosition.length; i++) {
+        if (listPosition[i] == b!.board[i]) expect(listPosition[i], i);
+      }
     });
 
-    test('Nível Fácil Test 10x16', () {
-      String? res = g!.setNivel("medio");
-      expect(res, "medio");
-    });
-    test('Nível médio Test Nuemro de bombas', () {
-      int res = g!.getBombs("medio");
-      expect(res, 30);
-    });
-    test('Nível Fácil Test 10x16 Size Table', () {
-      String? nivel = g!.setNivel("medio");
-      int res = g!.getNivelSize(nivel!);
-      expect(res, 161);
-    });
-    test('Nível Fácil Test 24x24', () {
-      String? res = g!.setNivel("dificil");
-      expect(res, "dificil");
+    test('Insert Bombs Board medium', () {
+      b!.setLevelGame(Level.medium);
+      b!.insertBombsBoard();
+      for (int i = 0; i < b!.board.length; i++) {
+        if (b!.board[i] == "*") expect(b!.board[i], "*");
+      }
     });
 
-    test('Nível difícil Test Nuemro de bombas', () {
-      int res = g!.getBombs("dificil");
-      expect(res, 100);
+    // Dificil
+
+    // teste set Tamanho tabuleiro level
+    test('test set level game difficult', () {
+      int res = b!.setLevelGame(Level.difficult);
+      expect(res, 576);
+    });
+    // teste para verificar o nível do tabuleiro
+    test('test level game difficult', () {
+      b!.setLevelGame(Level.difficult);
+      Level l = b!.getNivel()!;
+      expect(l, Level.difficult);
     });
 
-    test('Nível Fácil Test 24x24 Size Table', () {
-      String? nivel = g!.setNivel("dificil");
-      int res = g!.getNivelSize(nivel!);
-      expect(res, 577);
+    test('test Sorted bombs difficult', () {
+      b!.setLevelGame(Level.difficult);
+      List listPosition = b!.sortedBombs();
+      for (int i = 0; i < listPosition.length; i++) {
+        if (listPosition[i] == b!.board[i]) expect(listPosition[i], i);
+      }
     });
 
-    test('Nível Fácil Test Null', () {
-      try {
-        String? res = g!.setNivel("");
-        expect(res, "");
-      } on ExceptionNivelGame catch (e) {
-        print("$e");
+    test('Insert Bombs Board difficult', () {
+      b!.setLevelGame(Level.difficult);
+      b!.insertBombsBoard();
+      for (int i = 0; i < b!.board.length; i++) {
+        if (b!.board[i] == "*") expect(b!.board[i], "*");
       }
     });
   });

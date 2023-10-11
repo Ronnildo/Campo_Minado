@@ -1,64 +1,64 @@
-import 'dart:io';
+import 'dart:math';
 
-import 'package:campo_minado/components/coordenada.dart';
-import 'package:campo_minado/components/jogada.dart';
+import 'package:campo_minado/components/level.dart';
 
 class Board {
-  late Map<Coordenada, Jogada> _board = {};
-  late List _matrix;
+  late List _board = [];
+  List get board => _board;
 
-  Map<Coordenada, Jogada> get board => _board;
-
-  setSizeBoard(int value) {
-    _matrix = List.filled(value, {}, growable: false);
+  getNivel() {
+    if (_board.length == 64) {
+      return Level.easy;
+    } else if (_board.length == 160) {
+      return Level.medium;
+    } else if (_board.length == 576) {
+      return Level.difficult;
+    } else {
+      return;
+    }
   }
 
-  List get matrix => _matrix;
-
-  insertBombs(String nivel) {
-    if (nivel == "facil") {}
+  int setLevelGame(Level level) {
+    if (level == Level.easy) {
+      _board = List.filled(8 * 8, " ", growable: false);
+      return _board.length;
+    } else if (level == Level.medium) {
+      _board = List.filled(10 * 16, " ", growable: false);
+      return _board.length;
+    } else if (level == Level.difficult) {
+      _board = List.filled(24 * 24, " ", growable: false);
+      return _board.length;
+    } else {
+      return 0;
+    }
   }
 
-  printBoard() {
-    int passLine = 1;
-    if (_matrix.length == 65) {
-      passLine = 8;
-    } else if (_matrix.length == 161) {
-      passLine = 16;
-    } else if (_matrix.length == 577) {
-      passLine = 24;
-    }
-    // print(_matrix.length);
-    for (var i = 1; i < passLine + 1; i++) {
-      stdout.write(
-        "    $i  ",
-      );
-    }
-    print("");
-    int a = 1;
-    for (var i = 1; i < _matrix.length; i++) {
-      // print(i);
-      if (i == 1 || i % passLine + 1 == 0) {
-        stdout.write("$a");
+  sortedBombs() {
+    List position = [];
+    if (_board.length == 64) {
+      for (int i = 0; i < 10; i++) {
+        var mines = Random().nextInt(_board.length);
+        position.add(mines);
       }
-      stdout.write(" | ${_matrix[i]} |");
-      if (i % passLine == 0) {
-        a = a + 1;
-        print("\n");
-        if (passLine == 16) {
-          print("-" * (_matrix.length - (passLine * 3)));
-        }
-        if (passLine == 8) {
-          print("-" * (passLine * passLine - 7));
-        }
-        if (passLine == 24) {
-          print("-" * (passLine * 7 - 9));
-        }
-        if (a <= passLine || i % a == 0) {
-          stdout.write("$a");
-        }
+    } else if (_board.length == 160) {
+      for (int i = 0; i < 30; i++) {
+        var mines = Random().nextInt(_board.length);
+        position.add(mines);
+      }
+    } else if (_board.length == 576) {
+      for (int i = 0; i < 100; i++) {
+        var mines = Random().nextInt(_board.length);
+        position.add(mines);
       }
     }
-    print("\n");
+    print(position);
+    return position;
+  }
+
+  void insertBombsBoard() {
+    List bombs = sortedBombs();
+    for (var i in bombs) {
+      _board[i] = "*";
+    }
   }
 }
