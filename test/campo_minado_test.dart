@@ -28,11 +28,13 @@ void main() {
       int res = b!.setLevelGame(Level.easy);
       expect(res, 64);
     });
-    test('test Sorted bombs easy', () {
+    test('test Sorted position bombs easy', () {
       b!.setLevelGame(Level.easy);
       List listPosition = b!.sortedBombs();
-      for (int i = 0; i < listPosition.length; i++) {
-        if (listPosition[i] == b!.board[i]) expect(listPosition[i], i);
+      for (int elem = 0; elem < b!.board.length; elem++) {
+        if (listPosition.contains(elem)) {
+          expect(listPosition.contains(elem), true);
+        }
       }
     });
 
@@ -40,12 +42,26 @@ void main() {
       b!.setLevelGame(Level.easy);
       b!.insertBombsBoard();
       for (int i = 0; i < b!.board.length; i++) {
-        if (b!.board[i] == "*") expect(b!.board[i], "*");
+        if (b!.board[i] == -1) expect(b!.board[i], -1);
       }
     });
+
+    test('Count number of bombs easy', () {
+      b!.setLevelGame(Level.easy);
+      b!.insertBombsBoard();
+      b!.printBoard();
+      int count = 0;
+      for (int i = 0; i < b!.board.length; i++) {
+        if (b!.board[i] == -1) {
+          count += 1;
+        }
+      }
+      expect(count, 10);
+    });
+
     // Médio
     // teste set Tamanho tabuleiro level
-    test('test set level game easy', () {
+    test('test set level game medium', () {
       int res = b!.setLevelGame(Level.medium);
       expect(res, 160);
     });
@@ -59,8 +75,10 @@ void main() {
     test('test Sorted bombs medium', () {
       b!.setLevelGame(Level.medium);
       List listPosition = b!.sortedBombs();
-      for (int i = 0; i < listPosition.length; i++) {
-        if (listPosition[i] == b!.board[i]) expect(listPosition[i], i);
+      for (int elem = 0; elem < b!.board.length; elem++) {
+        if (listPosition.contains(elem)) {
+          expect(listPosition.contains(elem), true);
+        }
       }
     });
 
@@ -68,8 +86,21 @@ void main() {
       b!.setLevelGame(Level.medium);
       b!.insertBombsBoard();
       for (int i = 0; i < b!.board.length; i++) {
-        if (b!.board[i] == "*") expect(b!.board[i], "*");
+        if (b!.board[i] == -1) expect(b!.board[i], -1);
       }
+    });
+
+    test('Count number of bombs medium', () {
+      b!.setLevelGame(Level.medium);
+      b!.insertBombsBoard();
+      b!.printBoard();
+      int count = 0;
+      for (int i = 0; i < b!.board.length; i++) {
+        if (b!.board[i] == -1) {
+          count += 1;
+        }
+      }
+      expect(count, 30);
     });
 
     // Dificil
@@ -89,8 +120,10 @@ void main() {
     test('test Sorted bombs difficult', () {
       b!.setLevelGame(Level.difficult);
       List listPosition = b!.sortedBombs();
-      for (int i = 0; i < listPosition.length; i++) {
-        if (listPosition[i] == b!.board[i]) expect(listPosition[i], i);
+      for (int elem = 0; elem < b!.board.length; elem++) {
+        if (listPosition.contains(elem)) {
+          expect(listPosition.contains(elem), true);
+        }
       }
     });
 
@@ -98,8 +131,21 @@ void main() {
       b!.setLevelGame(Level.difficult);
       b!.insertBombsBoard();
       for (int i = 0; i < b!.board.length; i++) {
-        if (b!.board[i] == "*") expect(b!.board[i], "*");
+        if (b!.board[i] == -1) expect(b!.board[i], -1);
       }
+    });
+
+    test('Count number of bombs difficult', () {
+      b!.setLevelGame(Level.difficult);
+      b!.insertBombsBoard();
+      b!.printBoard();
+      int count = 0;
+      for (int i = 0; i < b!.board.length; i++) {
+        if (b!.board[i] == -1) {
+          count += 1;
+        }
+      }
+      expect(count, 100);
     });
   });
 }

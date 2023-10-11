@@ -1,19 +1,23 @@
-// import 'package:campo_minado/campo_minado.dart';
-// import 'dart:io';
+import 'package:campo_minado/campo_minado.dart';
+import 'package:campo_minado/components/board.dart';
+import 'package:campo_minado/components/level.dart';
+import 'dart:io';
 
-// import 'package:campo_minado/exceptions/exception_nivel_game.dart';
+import 'package:campo_minado/exceptions/exception_nivel_game.dart';
 
-// void main(List<String> arguments) {
-//   Game g = Game();
+void main(List<String> arguments) {
+  Board g = Board();
 
-//   g.init();
+  g.setLevelGame(Level.medium);
+  g.insertBombsBoard();
+  g.printBoard();
 
-//   // try {
-//   //   String? input = stdin.readLineSync();
+  // try {
+  //   String? input = stdin.readLineSync();
 
-//   //   print(g.getNivelSize(g.setNivel(input!)!));
-//   //   g.printGame();
-//   // } on ExceptionNivelGame catch (e) {
-//   //   print(e.message);
-//   // }
-// }
+  //   print(g.getNivelSize(g.setNivel(input!)!));
+  //   g.printGame();
+  // } on ExceptionNivelGame catch (e) {
+  //   print(e.message);
+  // }
+}

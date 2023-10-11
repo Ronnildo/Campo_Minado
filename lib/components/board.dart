@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:campo_minado/components/level.dart';
@@ -20,13 +21,13 @@ class Board {
 
   int setLevelGame(Level level) {
     if (level == Level.easy) {
-      _board = List.filled(8 * 8, " ", growable: false);
+      _board = List.filled(8 * 8, 0, growable: false);
       return _board.length;
     } else if (level == Level.medium) {
-      _board = List.filled(10 * 16, " ", growable: false);
+      _board = List.filled(10 * 16, 0, growable: false);
       return _board.length;
     } else if (level == Level.difficult) {
-      _board = List.filled(24 * 24, " ", growable: false);
+      _board = List.filled(24 * 24, 0, growable: false);
       return _board.length;
     } else {
       return 0;
@@ -36,29 +37,62 @@ class Board {
   sortedBombs() {
     List position = [];
     if (_board.length == 64) {
-      for (int i = 0; i < 10; i++) {
-        var mines = Random().nextInt(_board.length);
-        position.add(mines);
+      while (position.length < 10) {
+        var randomNumber = Random().nextInt(_board.length);
+        if (!position.contains(randomNumber)) {
+          position.add(randomNumber);
+        }
       }
     } else if (_board.length == 160) {
-      for (int i = 0; i < 30; i++) {
-        var mines = Random().nextInt(_board.length);
-        position.add(mines);
+      while (position.length < 30) {
+        var randomNumber = Random().nextInt(_board.length);
+        if (!position.contains(randomNumber)) {
+          position.add(randomNumber);
+        }
       }
     } else if (_board.length == 576) {
-      for (int i = 0; i < 100; i++) {
-        var mines = Random().nextInt(_board.length);
-        position.add(mines);
+      while (position.length < 100) {
+        var randomNumber = Random().nextInt(_board.length);
+        if (!position.contains(randomNumber)) {
+          position.add(randomNumber);
+        }
       }
     }
-    print(position);
     return position;
   }
 
   void insertBombsBoard() {
     List bombs = sortedBombs();
     for (var i in bombs) {
-      _board[i] = "*";
+      // print(i);
+      _board[i] = -1;
     }
+  }
+
+  printBoard() {
+    int i = 0;
+    int passLine = 0;
+    if (getNivel() == Level.easy) {
+      passLine = 8;
+    }
+    if (getNivel() == Level.medium) {
+      passLine = 16;
+    }
+    if (getNivel() == Level.difficult) {
+      passLine = 24;
+    }
+    for (int a = 0; a <= passLine; a++) {
+      stdout.write("  $a ");
+    }
+    print("\n");
+    for (var elem in _board) {
+      i += 1;
+      stdout.write("| $elem |");
+      if (i % passLine == 0) {
+        print("\n");
+      }
+      // print(i);
+    }
+    print("\n");
   }
 }
