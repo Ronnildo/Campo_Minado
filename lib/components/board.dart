@@ -69,18 +69,23 @@ class Board {
     }
   }
 
-  printBoard() {
-    int i = 0;
+  int newLineBoard() {
     int passLine = 0;
     if (getNivel() == Level.easy) {
-      passLine = 8;
+      return passLine = 8;
+    } else if (getNivel() == Level.medium) {
+      return passLine = 16;
+    } else if (getNivel() == Level.difficult) {
+      return passLine = 24;
+    } else {
+      return passLine;
     }
-    if (getNivel() == Level.medium) {
-      passLine = 16;
-    }
-    if (getNivel() == Level.difficult) {
-      passLine = 24;
-    }
+  }
+
+  printBoard() {
+    int i = 0;
+    int passLine = newLineBoard();
+
     for (int a = 0; a <= passLine; a++) {
       stdout.write("  $a ");
     }
@@ -95,4 +100,89 @@ class Board {
     }
     print("\n");
   }
+
+  void getNeighborsBombs() {
+    int res = newLineBoard();
+    //captura a posição que aparece a bomba
+    List adj = [];
+    List numbers = [];
+    print(_board.length);
+    for (int i = 0; i < _board.length; i++) {
+      if (i == _board.length - 1 && _board[i] == -1 && _board[i - 1] == 0) {
+        _board[i - 1] += 1;
+      }
+      if (_board[0] == -1 && _board[1] != -1) {
+        _board[i] += 1;
+      }
+      if (i != _board.length - 1 &&
+          i > 1 &&
+          i % res != 0 &&
+          _board[i] == -1 &&
+          _board[i + 1] != -1) {
+        _board[i + 1] += 1;
+      }
+      if (i != _board.length - 1 &&
+          i > 1 &&
+          i == res &&
+          _board[i] == -1 &&
+          _board[i + 1] != -1) {
+        _board[i + 1] += 1;
+      }
+      if (i != _board.length - 1 &&
+          i > 1 &&
+          i % res != 0 &&
+          _board[i] == -1 &&
+          _board[i + 1] == -1 &&
+          _board[i + 2] == -1) {
+        _board[i + 3] += 1;
+      }
+      if (i != _board.length - 1 && i > 1 && i % res != 0 && _board[i] == -1) {
+        _board[i + 1] += 1;
+      }
+      if (i != _board.length - 1 &&
+          i > 1 &&
+          i % res != 0 &&
+          _board[i] == -1 &&
+          _board[i - 1] != -1) {
+        _board[i - 1] += 1;
+      }
+      if (i != _board.length - 1 &&
+          i > 1 &&
+          i % res == 0 &&
+          _board[i] > 0 &&
+          _board[i + 1] == -1) {
+        _board[i] += 1;
+      }
+      if (i != _board.length - 1 &&
+          i > 1 &&
+          i % res == 0 &&
+          _board[i] > 0 &&
+          _board[i - 1] == -1) {
+        _board[i] -= 1;
+      }
+      if (i != _board.length - 1 &&
+          i % res == 0 &&
+          _board[i + 1] == -1 &&
+          i > 0 &&
+          _board[i - 1] == -1) {
+        _board[i - 1] -= 1;
+      }
+      // Verificar as adjacencias
+      if (_board[i] == -1) {
+        adj.add(i);
+      }
+      if (_board[i] > 0) {
+        numbers.add(i);
+      }
+    }
+    print("Bombas: $adj");
+    print("Números: $numbers");
+    printBoard();
+  }
+
+  // void neighbors(){
+  //   for(var  in _board){
+  //     for(var nei in _board)
+  //   }
+  // }
 }

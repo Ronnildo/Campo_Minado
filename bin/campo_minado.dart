@@ -8,10 +8,10 @@ import 'package:campo_minado/exceptions/exception_nivel_game.dart';
 void main(List<String> arguments) {
   Board g = Board();
 
-  g.setLevelGame(Level.medium);
+  g.setLevelGame(Level.easy);
   g.insertBombsBoard();
   g.printBoard();
-
+  g.getNeighborsBombs();
   // try {
   //   String? input = stdin.readLineSync();
 
