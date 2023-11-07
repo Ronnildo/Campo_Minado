@@ -1,6 +1,11 @@
-class Historico {
-  late Jogador j;
-  Map<Jogador, List<DateTime>> historico = {};
-}
+import 'package:campo_minado/components/jogador.dart';
 
-class Jogador {}
+class Historico {
+  Jogador j;
+
+  Historico(this.j);
+
+  registerGame() {}
+
+  readHist() {}
+}

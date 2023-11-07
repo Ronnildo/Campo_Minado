@@ -15,24 +15,23 @@ class Coordenada {
   int get y => _y;
   set y(int x) => _y = x;
 
-  bool validaCoordenada(int length) {
+  bool validaCoordenada(String level) {
     int pass = 0;
-    if (length == 64) {
+    if (level == "EASY") {
       if (_x >= 0 && _x <= 8 && _y >= 0 && _y <= 8) {
         return true;
       } else {
         return false;
       }
+    } else if (level == "MEDIUM") {
+      if (_x >= 0 && _x <= 16 && _y >= 0 && _y <= 10) {
+        return true;
+      }
+    } else if (level == "DIFFICULT") {
+      if (_x >= 0 && _x <= 24 && _y >= 0 && _y <= 24) {
+        return true;
+      }
     }
     return false;
-    // if (_x >= 0 && _x < length && _y >= 0 && _y <= length) {
-    //   if (length % pass == 0) {
-    //     return true;
-    //   } else {
-    //     return false;
-    //   }
-    // } else {
-    //   return false;
-    // }
   }
 }
