@@ -1,5 +1,5 @@
+import 'package:campo_minado/campo_minado.dart';
 import 'package:campo_minado/components/board.dart';
-import 'package:campo_minado/components/coordenada.dart';
 import 'package:campo_minado/components/jogada.dart';
 import 'package:campo_minado/components/level.dart';
 import 'package:campo_minado/components/zona.dart';
@@ -7,79 +7,73 @@ import 'package:parameterized_test/parameterized_test.dart';
 import 'package:test/test.dart';
 
 void main() {
-  Coordenada c;
-  setUp(() {});
+  parameterizedTest("Dificuldade tabuleiro test", [
+    Level.easy,
+    Level.medium,
+    Level.difficult,
+  ], p1(
+    (Level l) {
+      Board board = Board(difficulty: l);
+      expect(board.difficulty, l);
+    },
+  ));
 
-  group("Start game test", () {
-    // teste que verifica se todas as zonas estão vazias
-    parameterizedTest(
-      "Init game Start",
-      [
-        Level.easy,
-        Level.medium,
-        Level.difficult,
-      ],
-      p1(
-        (Level l) {
-          Board b = Board(l);
-          String res = b.getLevel();
-          expect(res, l.name.toUpperCase());
-        },
-      ),
-    );
+  group("Tabuleiro nível fácil test", () {
+    test("Tamanho tabuleiro nível fácil test", () {
+      Board b = Board(difficulty: Level.easy);
+      int res = b.getLength();
+      expect(res, 8 * 8);
+    });
 
-    parameterizedTest("Sorted Bombs por Level", [
-      Level.easy,
-      Level.medium,
-      Level.difficult,
-    ], p1(
-      (Level l) {
-        Board b = Board(l);
-        List bombs = b.sortedBombs();
-        for (int i = 0; i <= b.board.length; i++) {
-          if (bombs.contains(i)) {
-            expect(bombs.contains(i), true);
-          }
+    test("Insert bombs in board level easy test", () {
+      Board b = Board(difficulty: Level.easy);
+      for (var element in b.board) {
+        if (element.comBomba()) expect(element.comBomba(), equals(true));
+      }
+    });
+
+    test("Número de bombas correta test", () {
+      Board b = Board(difficulty: Level.easy);
+      int count = 0;
+      for (var element in b.board) {
+        if (element.marca == "*") {
+          count += 1;
         }
-      },
-    ));
-  });
-  group("Board level easy test", () {
-    // teste tamanho do tabuleiro
-    test("Set length easy test", () {
-      Board b = Board(Level.easy);
-      int res = b.board.length;
-      expect(res, 64);
+      }
+      expect(count, equals(10));
     });
 
     test("Get level test", () {
-      Board b = Board(Level.easy);
+      Board b = Board(difficulty: Level.easy);
       String level = b.getLevel();
       expect(level, "EASY");
     });
 
-    test("Sorted bombs in board level easy", () {
-      Board b = Board(Level.easy);
+    test("check number of empty zones is correct level easy test", () {
+      Board b = Board(difficulty: Level.easy);
+      int count = 0;
+      int expectResult = 54;
       for (var element in b.board) {
-        if (element == -1) expect(element, -1);
+        if (!element.comBomba()) count += 1;
       }
+      expect(count, equals(expectResult));
     });
 
     parameterizedTest(
-      "Coordenada invalid level easy test",
+      "Coordenada valid level easy test",
       [
         [0, 0],
         [0, 5],
-        [0, 8],
+        [0, 7],
         [1, 0],
         [1, 1],
         [1, 5],
         [2, 0],
         [2, 5],
-        [2, 8],
+        [2, 7],
         [3, 0],
         [3, 7],
-        [3, 8],
+        [3, 5],
         [4, 0],
         [4, 1],
         [4, 2],
@@ -87,19 +81,18 @@ void main() {
         [5, 5],
         [5, 6],
         [6, 1],
+        [6, 5],
         [6, 7],
-        [6, 8],
         [7, 0],
         [7, 1],
         [7, 2],
-        [8, 0],
-        [8, 6],
       ],
       p2((int line, int column) {
-        Board b = Board(Level.easy);
-        c = Coordenada(line, column);
-        bool res = c.validaCoordenada(b.getLevel());
-        expect(res, true);
+        Board b = Board(difficulty: Level.easy);
+        Game g = Game(b);
+        Zona z = Zona(line: line, column: column, marca: "");
+        bool res = g.validaCoordenada(z);
+        expect(res, equals(true));
       }),
     );
 
@@ -118,79 +111,77 @@ void main() {
         [7, 10],
       ],
       p2((int line, int column) {
-        Board b = Board(Level.easy);
-        c = Coordenada(line, column);
-        bool res = c.validaCoordenada(b.getLevel());
-        expect(res, false);
+        Board b = Board(difficulty: Level.easy);
+        Game g = Game(b);
+        Zona z = Zona(line: line, column: column, marca: "");
+        bool res = g.validaCoordenada(z);
+        expect(res, equals(false));
       }),
     );
+  });
+  group("Tabuleiro nível médio test", () {
+    test("Tamanho tabuleiro nível médio test", () {
+      Board b = Board(difficulty: Level.medium);
+      int res = b.getLength();
+      expect(res, 10 * 16);
+    });
 
-    test("Insert bombs level easy test", () {
-      Board b = Board(Level.easy);
+    test("Sorted bombs in board level medium test", () {
+      Board b = Board(difficulty: Level.medium);
       for (var element in b.board) {
-        if (element.comBomba) expect(element.comBomba, true);
+        if (element.comBomba()) expect(element.comBomba(), equals(true));
       }
     });
 
-    test("Count bombs in level easy", () {
-      Board b = Board(Level.easy);
-      int countBombs = 0;
+    test("Número de bombas correta test", () {
+      Board b = Board(difficulty: Level.medium);
+      int count = 0;
       for (var element in b.board) {
-        if (element.comBomba) {
-          countBombs += 1;
+        if (element.marca == "*") {
+          count += 1;
         }
       }
-      expect(countBombs, 10);
-    });
-
-    // parameterizedTest(
-    //   "adjacencies at the corners of the board",
-    //   [
-    //     [0, 0],
-    //     [0, 8],
-    //     [8, 0],
-    //     [Level.easy],
-    //   ],
-    //   p2(
-    //     (int line, int column) {
-    //       Board b = Board(Level.easy);
-    //     },
-    //   ),
-    // );
-  });
-
-  group("Board level medium test", () {
-    // teste tamanho do tabuleiro
-    test("Set length medium test", () {
-      Board b = Board(Level.medium);
-
-      int res = b.board.length;
-      expect(res, 160);
+      expect(count, equals(30));
     });
 
     test("Get level test", () {
-      Board b = Board(Level.medium);
+      Board b = Board(difficulty: Level.medium);
       String level = b.getLevel();
       expect(level, "MEDIUM");
+    });
+
+    test("check number of empty zones is correct level medium test", () {
+      Board b = Board(difficulty: Level.medium);
+      int count = 0;
+      int expectResult = 130;
+      for (var element in b.board) {
+        if (!element.comBomba()) count += 1;
+      }
+      expect(count, equals(expectResult));
     });
 
     parameterizedTest(
       "Coordenada valid level medium test",
       [
-        [0, 10],
+        [0, 9],
         [0, 8],
+        [1, 0],
+        [1, 5],
+        [1, 9],
         [5, 5],
         [5, 8],
         [8, 1],
         [8, 6],
-        [16, 10],
-        [16, 8],
+        [8, 9],
+        [15, 9],
+        [15, 8],
       ],
       p2((int line, int column) {
-        Board b = Board(Level.medium);
-        c = Coordenada(line, column);
-        bool res = c.validaCoordenada(b.getLevel());
-        expect(res, true);
+        Board b = Board(difficulty: Level.medium);
+        Game g = Game(b);
+        Zona z = Zona(line: line, column: column, marca: "");
+        bool res = g.validaCoordenada(z);
+        expect(res, equals(true));
       }),
     );
 
@@ -202,48 +193,57 @@ void main() {
         [-1, 5],
         [-5, 8],
         [10, -1],
-        [5, -1]
+        [5, -1],
+        [16, 8],
+        [16, -5],
       ],
       p2((int line, int column) {
-        Board b = Board(Level.medium);
-        c = Coordenada(line, column);
-        bool res = c.validaCoordenada(b.getLevel());
-        expect(res, false);
+        Board b = Board(difficulty: Level.easy);
+        Game g = Game(b);
+        Zona z = Zona(line: line, column: column, marca: "");
+        bool res = g.validaCoordenada(z);
+        expect(res, equals(false));
       }),
     );
-
-    test("Insert bombs level medium test", () {
-      Board b = Board(Level.medium);
-      for (var element in b.board) {
-        if (element.comBomba) expect(element.comBomba, true);
-      }
+  });
+  group("Tabuleiro nível difícil test", () {
+    test("Tamanho tabuleiro níve difícil test", () {
+      Board b = Board(difficulty: Level.difficult);
+      int res = b.getLength();
+      expect(res, 24 * 24);
     });
 
-    test("Count bombs in level medium", () {
-      Board b = Board(Level.medium);
-      int countBombs = 0;
+    test("Sorted bombs in board level difficult test", () {
+      Board b = Board(difficulty: Level.difficult);
       for (var element in b.board) {
-        if (element.comBomba) {
-          countBombs += 1;
+        if (element.comBomba()) expect(element.comBomba(), equals(true));
+      }
+    });
+    test("Número de bombas correta test", () {
+      Board b = Board(difficulty: Level.difficult);
+      int count = 0;
+      for (var element in b.board) {
+        if (element.marca == "*") {
+          count += 1;
         }
       }
-      expect(countBombs, 30);
-    });
-  });
-
-  group("Board level difficult test", () {
-    // teste tamanho do tabuleiro
-    test("Set length difficult test", () {
-      Board b = Board(Level.difficult);
-
-      int res = b.board.length;
-      expect(res, 576);
+      expect(count, equals(100));
     });
 
     test("Get level test", () {
-      Board b = Board(Level.difficult);
+      Board b = Board(difficulty: Level.difficult);
       String level = b.getLevel();
       expect(level, "DIFFICULT");
+    });
+
+    test("check number of empty zones is correct level difícil test", () {
+      Board b = Board(difficulty: Level.difficult);
+      int count = 0;
+      int expectResult = 476;
+      for (var element in b.board) {
+        if (!element.comBomba()) count += 1;
+      }
+      expect(count, equals(expectResult));
     });
 
     parameterizedTest(
@@ -251,18 +251,26 @@ void main() {
       [
         [0, 10],
         [0, 8],
-        [16, 5],
+        [0, 16],
+        [0, 23],
+        [8, 0],
+        [8, 8],
+        [8, 16],
+        [8, 23],
+        [16, 0],
+        [16, 8],
         [5, 8],
         [20, 1],
         [20, 6],
-        [24, 10],
-        [24, 8],
+        [23, 10],
+        [23, 8],
       ],
       p2((int line, int column) {
-        Board b = Board(Level.difficult);
-        c = Coordenada(line, column);
-        bool res = c.validaCoordenada(b.getLevel());
-        expect(res, true);
+        Board b = Board(difficulty: Level.difficult);
+        Game g = Game(b);
+        Zona z = Zona(line: line, column: column, marca: "");
+        bool res = g.validaCoordenada(z);
+        expect(res, equals(true));
       }),
     );
 
@@ -274,39 +282,23 @@ void main() {
         [-1, 20],
         [-5, 24],
         [10, -1],
-        [5, -1]
+        [-5, 0],
+        [7, -11],
+        [9, -22],
+        [13, -1],
       ],
       p2((int line, int column) {
-        Board b = Board(Level.difficult);
-
-        c = Coordenada(line, column);
-        bool res = c.validaCoordenada(b.getLevel());
-        expect(res, false);
+        Board b = Board(difficulty: Level.difficult);
+        Game g = Game(b);
+        Zona z = Zona(line: line, column: column, marca: "");
+        bool res = g.validaCoordenada(z);
+        expect(res, equals(false));
       }),
     );
-
-    test("Insert bombs level difficult test", () {
-      Board b = Board(Level.difficult);
-      b.insertBombs();
-      for (var element in b.board) {
-        if (element.comBomba) expect(element.comBomba, true);
-      }
-    });
-
-    test("Count bombs in level difficult", () {
-      Board b = Board(Level.difficult);
-      int countBombs = 0;
-      for (var element in b.board) {
-        if (element.comBomba) {
-          countBombs += 1;
-        }
-      }
-      expect(countBombs, 100);
-    });
   });
 
-  group("Jogada test", () {
-    parameterizedTest("Jogada em zona coberta test", [
+  group("Testes de Jogada", () {
+    parameterizedTest("Jogada descobrir zona test", [
       [0, 0],
       [0, 5],
       [0, 8],
@@ -315,72 +307,50 @@ void main() {
       [4, 7],
       [8, 0],
       [5, 6],
+      [23, 2],
+      [16, 0],
+      [10, 1],
+      [20, 4],
+      [10, 3],
+      [12, 4],
+      [15, 6],
+      [7, 0],
     ], p2(
-      (int line, int column) {
-        Board b = Board(Level.easy);
-        Zona z = Zona(
-          line,
-          column,
-        );
-        Jogada j = Jogada(z, b);
-        bool res = j.jogadaEmZonaAberta();
-        if (!res) {
-          expect(res, equals(false));
-        } else {
-          expect(res, equals(true));
-        }
-      },
-    ));
-
-    parameterizedTest("Jogada em zona com bomba test", [
-      [0, 0],
-      [0, 5],
-      [0, 8],
-      [1, 8],
-      [2, 4],
-      [4, 7],
-      [8, 0],
-      [5, 6],
-    ], p2(
-      (int l, int col) {
-        Board b = Board(Level.easy);
-        Zona z = Zona(l, col);
-        Jogada j = Jogada(z, b);
-        bool res = j.jogadaEmZonaComBomba();
-        if (res) {
-          expect(res, equals(true));
-        } else {
-          expect(res, equals(false));
-        }
-      },
-    ));
-
-    parameterizedTest("Jogada em zona marcada com bandeira test", [
-      [0, 0],
-      [0, 5],
-      [0, 8],
-      [1, 8],
-      [2, 4],
-      [4, 7],
-      [8, 0],
-      [5, 6],
-    ], p2(
-      (int ln, int col) {
-        Board b = Board(Level.easy);
-        Zona z = Zona(ln, col);
+      (int lin, int col) {
+        Zona z = Zona(line: lin, column: col, marca: "");
+        Board b = Board(difficulty: Level.easy);
         Jogada j1 = Jogada(z, b);
-        j1.c.marcaComBandeira();
-        Jogada j2 = Jogada(z, b);
-        bool res = j2.jogadaEmZonaComBandeira();
-        if (res) {
-          expect(res, equals(true));
-        } else {
-          expect(res, equals(false));
+        j1.jogadaRevelarZona();
+        String res = z.marca;
+        if (res == " ") {
+          expect(res, " ");
+        } else if (res == "*") {
+          expect(res, "*");
         }
+        expect(res, "");
       },
     ));
 
-    parameterizedTest("Jogada em zona já descoberta", [
+    parameterizedTest("Jogada marcar zona com bandeira easy test", [
+      [0, 0],
+      [0, 5],
+      [0, 7],
+      [1, 7],
+      [2, 4],
+      [4, 7],
+      [7, 0],
+      [5, 6],
+    ], p2(
+      (int lin, int col) {
+        Zona z = Zona(line: lin, column: col, marca: "");
+        Board b = Board(difficulty: Level.easy);
+        Jogada j1 = Jogada(z, b);
+        bool res = j1.jogadaMarcarComBandeira();
+        expect(res, true);
+      },
+    ));
+
+    parameterizedTest("Jogada marcar zona com bandeira medium test", [
       [0, 0],
       [0, 5],
       [0, 8],
@@ -389,23 +359,23 @@ void main() {
       [4, 7],
       [8, 0],
       [5, 6],
+      [15, 0],
+      [10, 1],
+      [10, 3],
+      [12, 4],
+      [15, 6],
+      [7, 0],
     ], p2(
-      (int ln, int col) {
-        Board b = Board(Level.easy);
-        Zona z = Zona(ln, col);
+      (int lin, int col) {
+        Zona z = Zona(line: lin, column: col, marca: "");
+        Board b = Board(difficulty: Level.medium);
         Jogada j1 = Jogada(z, b);
-        j1.c.openZone();
-        Jogada j2 = Jogada(z, b);
-        bool res = j2.jogadaEmZonaAberta();
-        if (res) {
-          expect(res, equals(true));
-        } else {
-          expect(res, equals(false));
-        }
+        bool res = j1.jogadaMarcarComBandeira();
+        expect(res, true);
       },
     ));
 
-    parameterizedTest("jogada inválida marcar zona já aberta", [
+    parameterizedTest("Jogada desmarcar zona com bandeira test", [
       [0, 0],
       [0, 5],
       [0, 8],
@@ -414,23 +384,26 @@ void main() {
       [4, 7],
       [8, 0],
       [5, 6],
+      [15, 0],
+      [10, 1],
+      [10, 3],
+      [12, 4],
+      [15, 6],
+      [7, 0],
     ], p2(
-      (int ln, int col) {
-        Board b = Board(Level.easy);
-        Zona z = Zona(ln, col);
+      (int lin, int col) {
+        Board b = Board(difficulty: Level.medium);
+
+        Zona z = Zona(line: lin, column: col, marca: "");
         Jogada j1 = Jogada(z, b);
-        j1.c.openZone();
+        j1.jogadaMarcarComBandeira();
         Jogada j2 = Jogada(z, b);
-        bool res = j2.jogadaEmZonaAberta();
-        if (res) {
-          expect(res, equals(true));
-        } else {
-          expect(res, equals(false));
-        }
+        bool res = j2.jogadaDesmarcarZonaComBandeira();
+        expect(res, true);
       },
     ));
 
-    parameterizedTest("Jogava inválida descobrir zona com bandeira", [
+    parameterizedTest("Jogada inválida marcar zona descoberta test", [
       [0, 0],
       [0, 5],
       [0, 8],
@@ -439,23 +412,31 @@ void main() {
       [4, 7],
       [8, 0],
       [5, 6],
+      [23, 2],
+      [16, 0],
+      [10, 1],
+      [20, 4],
+      [10, 3],
+      [12, 4],
+      [15, 6],
+      [7, 0],
     ], p2(
-      (int ln, int col) {
-        Board b = Board(Level.easy);
-        Zona z = Zona(ln, col);
+      (int lin, int col) {
+        Board b = Board(difficulty: Level.easy);
+        Zona z = Zona(line: lin, column: col, marca: "");
         Jogada j1 = Jogada(z, b);
-        j1.c.marcaComBandeira();
+        j1.jogadaRevelarZona();
         Jogada j2 = Jogada(z, b);
-        bool res = j2.jogadaDescobrirZonaComBandeira();
+        bool res = j2.jogadaMarcarComBandeira();
         if (res) {
-          expect(res, equals(true));
+          expect(res, true);
         } else {
-          expect(res, equals(false));
+          expect(res, false);
         }
       },
     ));
 
-    parameterizedTest("Jogada inválida cobrir zona descoberta", [
+    parameterizedTest("Jogada inválida revelar zona já revelada test", [
       [0, 0],
       [0, 5],
       [0, 8],
@@ -464,18 +445,59 @@ void main() {
       [4, 7],
       [8, 0],
       [5, 6],
+      [23, 2],
+      [16, 0],
+      [10, 1],
+      [20, 4],
+      [10, 3],
+      [12, 4],
+      [15, 6],
+      [7, 0],
     ], p2(
-      (int ln, int col) {
-        Board b = Board(Level.easy);
-        Zona z = Zona(ln, col);
+      (int lin, int col) {
+        Board b = Board(difficulty: Level.easy);
+        Zona z = Zona(line: lin, column: col, marca: "");
         Jogada j1 = Jogada(z, b);
-        j1.c.openZone();
+        j1.jogadaRevelarZona();
         Jogada j2 = Jogada(z, b);
-        bool res = j2.jogadaCobrirComBandeiraZonaDescoberta();
+        bool res = j2.jogadaRevelarZona();
         if (res) {
-          expect(res, equals(true));
+          expect(res, true);
         } else {
-          expect(res, equals(false));
+          expect(res, false);
+        }
+      },
+    ));
+
+    parameterizedTest("Jogada descobrir zona marcada test", [
+      [0, 0],
+      [0, 5],
+      [0, 8],
+      [1, 8],
+      [2, 4],
+      [4, 7],
+      [8, 0],
+      [5, 6],
+      [23, 2],
+      [16, 0],
+      [10, 1],
+      [20, 4],
+      [10, 3],
+      [12, 4],
+      [15, 6],
+      [7, 0],
+    ], p2(
+      (int lin, int col) {
+        Board b = Board(difficulty: Level.easy);
+        Zona z = Zona(line: lin, column: col, marca: "");
+        Jogada j1 = Jogada(z, b);
+        j1.jogadaMarcarComBandeira();
+        Jogada j2 = Jogada(z, b);
+        bool res = j2.jogadaRevelarZona();
+        if (res) {
+          expect(res, true);
+        } else {
+          expect(res, false);
         }
       },
     ));
@@ -489,27 +511,100 @@ void main() {
       [4, 7],
       [8, 0],
       [5, 6],
+      [23, 2],
+      [16, 0],
+      [10, 1],
+      [20, 4],
+      [10, 3],
+      [12, 4],
+      [15, 6],
+      [7, 0],
     ], p2(
-      (int ln, int col) {
-        Board b = Board(Level.easy);
-        Zona z = Zona(ln, col);
+      (int line, int column) {
+        Board b = Board(difficulty: Level.easy);
+        Zona z = Zona(line: line, column: column, marca: "");
         Jogada j1 = Jogada(z, b);
-        j1.c.marcaComBandeira();
+        j1.jogadaMarcarComBandeira();
         Jogada j2 = Jogada(z, b);
-        j2.c.removeBandeira();
+        bool res = j2.jogadaDesmarcarZonaComBandeira();
         Jogada j3 = Jogada(z, b);
-        j3.c.removeBandeira();
-        bool res = j3.jogadaDescobrirZonaSemBandeira();
-        if (res) {
-          expect(res, equals(true));
+        bool tes = j3.jogadaRevelarZona();
+        if (tes) {
+          expect(tes, true);
         } else {
-          expect(res, equals(false));
+          expect(tes, false);
         }
       },
     ));
   });
 
-  group("Game test", () {
-    test("", () {});
+  group("Condições de vitória e derrota", () {
+    parameterizedTest("Condição de derrota teste", [
+      [0, 0],
+      [0, 5],
+      [0, 8],
+      [1, 8],
+      [2, 4],
+      [4, 7],
+      [8, 0],
+      [5, 6],
+    ], p2(
+      (int line, int column) {
+        Zona z = Zona(line: line, column: column, marca: "_");
+        Board b = Board(difficulty: Level.easy);
+        Game g = Game(b);
+        Jogada j1 = Jogada(z, b);
+        j1.jogadaRevelarZona();
+        bool res = z.comBomba();
+        if (res) {
+          expect(res, equals(true));
+        }
+        expect(res, equals(false));
+      },
+    ));
+
+    parameterizedTest("Número de bandeiras level easy test", [
+      [0, 0],
+      [0, 5],
+      [0, 8],
+      [1, 8],
+      [2, 4],
+      [4, 7],
+      [7, 0],
+      [5, 6],
+      [3, 7],
+      [6, 1]
+    ], p2(
+      (int lin, int col) {
+        Zona z = Zona(line: lin, column: col, marca: "");
+        Board b = Board(difficulty: Level.easy);
+        Jogada j1 = Jogada(z, b);
+        j1.jogadaMarcarComBandeira();
+        bool count = b.contagemNumeroDeBandeiras() < 10;
+        expect(count, true);
+      },
+    ));
   });
+
+  parameterizedTest("Número de bandeiras level easy test", [
+    [0, 0],
+    [0, 5],
+    [0, 8],
+    [1, 8],
+    [2, 4],
+    [4, 7],
+    [7, 0],
+    [5, 6],
+    [3, 7],
+    [6, 1]
+  ], p2(
+    (int lin, int col) {
+      Zona z = Zona(line: lin, column: col, marca: "");
+      Board b = Board(difficulty: Level.easy);
+      Jogada j1 = Jogada(z, b);
+      j1.jogadaMarcarComBandeira();
+      bool count = b.contagemNumeroDeBandeiras() < 10;
+      expect(count, true);
+    },
+  ));
 }

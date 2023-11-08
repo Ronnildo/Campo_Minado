@@ -2,59 +2,58 @@ import 'package:campo_minado/components/board.dart';
 import 'package:campo_minado/components/zona.dart';
 
 class Jogada {
-  final Zona c;
-  final Board t;
-  Jogada(
-    this.c,
-    this.t,
-  );
+  Zona _zona;
+  Board _b;
+  Jogada(this._zona, this._b);
 
-  bool jogadaEmZonaCoberta() {
-    if (!c.aberto) {
-      return true;
-    }
-    return false;
-  }
+  get zonaJ => _zona;
 
-  bool jogadaEmZonaAberta() {
-    if (c.aberto) {
-      return true;
-    }
-    return false;
-  }
-
-  bool jogadaEmZonaComBomba() {
-    if (c.comBomba) {
-      return true;
-    }
-    return false;
-  }
-
-  bool jogadaEmZonaComBandeira() {
-    if (c.bandeira) {
-      return true;
-    } else {
+  get zona => _zona;
+  jogadaRevelarZona() {
+    for (var element in _b.board) {
+      if (element.line == zona.line && element.column == zona.column) {
+        if (!element.comBomba() &&
+            !element.aberto() &&
+            !element.comBandeira()) {
+          element.abrirZona();
+          return true;
+        }
+      }
       return false;
     }
   }
 
-  bool jogadaDescobrirZonaComBandeira() {
-    if (c.bandeira) {
-      return true;
+  jogadaMarcarComBandeira() {
+    for (var element in _b.board) {
+      if (element.line == zona.line && element.column == zona.column) {
+        if (!element.aberto() &&
+            _b.contagemNumeroDeBandeiras() < _b.insertMines()) {
+          element.marcarComBandeira();
+          return true;
+        }
+      }
     }
     return false;
   }
 
-  bool jogadaCobrirComBandeiraZonaDescoberta() {
-    if (c.aberto) {
-      return true;
+  jogadaDesmarcarZonaComBandeira() {
+    for (var element in _b.board) {
+      if (element.line == zona.line && element.column == zona.column) {
+        if (element.comBandeira() && !element.aberto()) {
+          element.desmarcarZonaComBandeira();
+          return true;
+        }
+      }
     }
+
     return false;
   }
 
-  bool jogadaDescobrirZonaSemBandeira() {
-    if (!c.bandeira) {
-      return true;
+  gameOver() {
+    for (var element in _b.board) {
+      if (element.comBomba()) {
+        return true;
+      }
     }
     return false;
   }

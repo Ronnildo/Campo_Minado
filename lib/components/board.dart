@@ -5,14 +5,13 @@ import 'package:campo_minado/components/level.dart';
 import 'package:campo_minado/components/zona.dart';
 
 class Board {
-  Level difficulty;
-  late List<Zona> _board = [];
-
-  Board(this.difficulty) {
+  final Level difficulty;
+  List<Zona> _board = [];
+  Board({required this.difficulty}) {
     _setLegthBoard();
+    insertMines();
     _listNeighbors();
-    insertBombs();
-    boardInit();
+    printBoard(board);
   }
 
   get board => _board;
@@ -20,62 +19,54 @@ class Board {
   _listNeighbors() {
     for (var zone in _board) {
       for (var neighbor in _board) {
-        zone.pumpsAdjacent(neighbor);
+        zone.calcularAdjacentes(neighbor);
       }
-    }
-  }
-
-  void boardInit() {
-    int i = 0;
-    int passLine = newLineBoard();
-
-    print("\n");
-    for (var elem in _board) {
-      i += 1;
-      stdout.write(" [ ] ");
-      if (i % passLine == 0) {
-        print("\n");
-      }
-      // print(i);
-    }
-    print("\n");
-  }
-
-  int newLineBoard() {
-    int passLine = 0;
-    if (getLevel() == "EASY") {
-      return passLine = 8;
-    } else if (getLevel() == "MEDIUM") {
-      return passLine = 16;
-    } else if (getLevel() == "DIFFICULT") {
-      return passLine = 24;
-    } else {
-      return passLine;
     }
   }
 
   void _setLegthBoard() {
-    if (difficulty.name == "easy") {
+    if (difficulty == Level.easy) {
       for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
-          _board.add(Zona(i, j));
+          _board.add(Zona(line: i, column: j, marca: "_"));
         }
       }
-    } else if (difficulty.name == "medium") {
-      for (int i = 0; i < 10; i++) {
-        for (int j = 0; j < 16; j++) {
-          _board.add(Zona(i, j));
+    } else if (difficulty == Level.medium) {
+      for (int i = 0; i < 16; i++) {
+        for (int j = 0; j < 10; j++) {
+          _board.add(Zona(line: i, column: j, marca: "_"));
         }
       }
-    } else if (difficulty.name == "difficult") {
+    } else if (difficulty == Level.difficult) {
       for (int i = 0; i < 24; i++) {
         for (int j = 0; j < 24; j++) {
-          _board.add(Zona(i, j));
+          _board.add(Zona(line: i, column: j, marca: "_"));
         }
       }
-    } else {
-      throw ArgumentError("Invalid level");
     }
+  }
+
+  int getLength() {
+    if (difficulty == Level.easy) {
+      return 8 * 8;
+    } else if (difficulty == Level.medium) {
+      return 10 * 16;
+    } else if (difficulty == Level.difficult) {
+      return 24 * 24;
+    } else {
+      return 8 * 8;
+    }
+  }
+
+  int newLine() {
+    if (getLength() == 8 * 8) {
+      return 8;
+    } else if (getLength() == 10 * 16) {
+      return 16;
+    } else if (getLength() == 24 * 24) {
+      return 24;
+    }
+    return 8;
   }
 
   String getLevel() {
@@ -89,7 +80,45 @@ class Board {
     return "EASY";
   }
 
-  List sortedBombs() {
+  printBoard(List board) {
+    int a = 0;
+    int pass = newLine();
+    for (var element in board) {
+      a += 1;
+      if (element.marca == "*") {
+        stdout.write(" [ ${element.marca} ] ");
+      } else {
+        stdout.write(" [ ${element.marca} ] ");
+      }
+      if (a % pass == 0) {
+        print("\n");
+      }
+    }
+  }
+
+  statusZone(Zona z) {
+    int a = 0;
+    int pass = newLine();
+    for (var element in board) {
+      a += 1;
+      if (element.marca == "*") {
+        stdout.write(" [ _ ] ");
+      } else if (element.marca == " " && element.qtdeMinasVizinhas > 0) {
+        stdout.write(" [ ${element.qtdeMinasVizinhas} ] ");
+      } else if (element.aberto()) {
+        stdout.write(" [ ${element.marca} ] ");
+      } else if (element.comBandeira()) {
+        stdout.write(" [ ${element.marca} ] ");
+      } else {
+        stdout.write(" [ ${element.marca} ] ");
+      }
+      if (a % pass == 0) {
+        print("\n");
+      }
+    }
+  }
+
+  List sortedPositions() {
     List position = [];
     if (_board.length == 64) {
       while (position.length < 10) {
@@ -116,10 +145,29 @@ class Board {
     return position;
   }
 
-  void insertBombs() {
-    List bombs = sortedBombs();
-    for (var i in bombs) {
-      _board[i].bombInPosition();
+  void reset() {
+    _board.forEach((element) => element.resetGame());
+  }
+
+  void revealBombs() {
+    _board.forEach((element) => element.revealBombs());
+  }
+
+  contagemNumeroDeBandeiras() {
+    int count = 0;
+    for (var element in _board) {
+      if (element.comBandeira()) {
+        count += 1;
+      }
     }
+    return count;
+  }
+
+  insertMines() {
+    List positions = sortedPositions();
+    for (var element in positions) {
+      _board[element].minar();
+    }
+    return positions.length;
   }
 }

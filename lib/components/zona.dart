@@ -1,22 +1,19 @@
 class Zona {
-  final int _line;
-  final int _column;
+  int line;
+  int column;
   final List<Zona> neighbors = [];
 
-  bool _aberto = false;
-  bool _bandeira = false;
-  bool _comBomba = false;
-  bool _explosao = false;
+  String marca = "";
 
-  Zona(this._line, this._column);
+  Zona({required this.line, required this.column, required this.marca});
 
-  get line => _line;
+  minar() {
+    marca = "*";
+  }
 
-  get column => _column;
-
-  void pumpsAdjacent(Zona neighbor) {
-    final positionLine = (_line - neighbor._line).abs();
-    final positionColumn = (_line - neighbor._column).abs();
+  void calcularAdjacentes(Zona neighbor) {
+    final positionLine = (line - neighbor.line).abs();
+    final positionColumn = (line - neighbor.column).abs();
 
     if (positionLine == 0 && positionColumn == 0) {
       return;
@@ -27,73 +24,73 @@ class Zona {
     }
   }
 
-  void openZone() {
-    if (_aberto) {
+  abrirZona() {
+    if (marca == " ") {
       return;
     }
-    _aberto = true;
-
-    if (_comBomba) {
-      _explosao = true;
+    marca = " ";
+    if (marca == "*") {
+      return "*";
     }
-
-    if (neighborSafe) {
-      neighbors.forEach((element) => element.openZone());
+    if (vizinhancaSegura) {
+      neighbors.forEach((element) => element.abrirZona());
     }
   }
 
-  void revealBomb() {
-    if (_comBomba) {
-      _aberto = true;
+  marcarComBandeira() {
+    marca = "B";
+  }
+
+  desmarcarZonaComBandeira() {
+    if (marca == "B") {
+      marca = "_";
+    } else {
+      return;
     }
   }
 
-  void marcaComBandeira() {
-    _bandeira = true;
+  comBomba() {
+    if (marca == "*") {
+      return true;
+    }
+    return false;
   }
 
-  void bombInPosition() {
-    _comBomba = true;
+  aberto() {
+    if (marca == " ") {
+      return true;
+    }
+    return false;
   }
 
-  void removeBandeira() {
-    _bandeira = !_bandeira;
+  comBandeira() {
+    if (marca == "B") {
+      return true;
+    }
+    return false;
   }
 
-  void resetGame() {
-    _aberto = false;
-    _bandeira = false;
-    _comBomba = false;
-    _explosao = false;
+  resetGame() {
+    marca = "_";
   }
 
-  bool get comBomba {
-    return _comBomba;
+  revealBombs() {
+    if (marca == "*") {
+      marca = "*";
+    }
   }
 
-  bool get explosao {
-    return _explosao;
-  }
-
-  bool get aberto {
-    return _aberto;
-  }
-
-  bool get bandeira {
-    return _bandeira;
-  }
-
-  bool get neighborSafe {
-    return neighbors.every((v) => !v._comBomba);
+  bool get vizinhancaSegura {
+    return neighbors.every((element) => element.marca != "*");
   }
 
   bool get resolvido {
-    bool minadoEMarcado = comBomba && bandeira;
-    bool seguroEAberto = !comBomba && aberto;
+    bool minadoEMarcado = comBomba() && comBandeira();
+    bool seguroEAberto = !comBomba() && aberto();
     return minadoEMarcado || seguroEAberto;
   }
 
-  int get qtdeMinasNaVizinhanca {
-    return neighbors.where((v) => v.comBomba).length;
+  int get qtdeMinasVizinhas {
+    return neighbors.where((v) => v.comBomba()).length;
   }
 }

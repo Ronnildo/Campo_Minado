@@ -1,45 +1,108 @@
 import 'dart:io';
 
 import 'package:campo_minado/components/board.dart';
-import 'package:campo_minado/components/historico.dart';
-import 'package:campo_minado/components/jogada.dart';
-import 'package:campo_minado/components/jogador.dart';
-import 'package:campo_minado/components/level.dart';
 import 'package:campo_minado/components/zona.dart';
 
 class Game {
-  late Board b;
-  late Zona z;
-  late Jogador player;
-  late Historico h;
+  Board board;
 
-  Game(Level l, Jogador j) {
-    b = Board(l);
-    h = Historico(j);
-  }
+  Game(this.board);
 
   init() {
-    b.boardInit();
+    board.printBoard(board.board);
   }
 
-  suaJogada() {
-    stdout.write("Sua jogada (0,0): ");
-    var jogada = stdin.readLineSync();
+  acoes(String op, Zona zona) {
+    print("\n");
 
-    switch (jogada!) {
+    switch (op) {
       case "1":
+        for (var element in board.board) {
+          if (element.line == zona.line && element.column == zona.column) {
+            if (!element.comBomba() &&
+                !element.aberto() &&
+                !element.comBandeira()) {
+              element.abrirZona();
+            } else if (element.comBomba()) {
+              print("Não foi dessa vez!!");
+              return;
+            }
+          }
+        }
         break;
       case "2":
+        for (var element in board.board) {
+          if (element.line == zona.line && element.column == zona.column) {
+            if (!element.aberto() && !element.comBandeira()) {
+              element.marcarComBandeira();
+            }
+          }
+        }
+        // board.statusZone(zona);
+
         break;
       case "3":
+        for (var element in board.board) {
+          if (element.line == zona.line &&
+              element.column == zona.column &&
+              element.comBandeira()) {
+            element.desmarcarZonaComBandeira();
+          }
+        }
+        // board.statusZone(zona);
+
         break;
-      default:
     }
+
+    board.statusZone(zona);
   }
 
-  menuJogada() {
-    print("1 - revelar zona");
-    print("2 - marcar com bandeira");
-    print("3 - desmarcar zona");
+  bool validaCoordenada(Zona z) {
+    if (board.getLevel() == "EASY") {
+      if (z.line >= 0 && z.line < 8) {
+        if (z.column >= 0 && z.column < 8) {
+          return true;
+        }
+      } else {
+        return false;
+      }
+    } else if (board.getLevel() == "MEDIUM") {
+      if (z.line >= 0 && z.line < 16) {
+        if (z.column >= 0 && z.column < 10) {
+          return true;
+        }
+      }
+    } else if (board.getLevel() == "DIFFICULT") {
+      if (z.line >= 0 && z.line < 24) {
+        if (z.column >= 0 && z.column < 24) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  gameOver(Zona zona) {
+    for (var element in board.board) {
+      if (element.line == zona.line && element.column == zona.column) {
+        if (element.comBomba() && !element.comBandeira()) {
+          return true;
+        }
+        return false;
+      }
+    }
+    return false;
+  }
+
+  vitoria(Zona zona) {
+    for (var element in board.board) {
+      if (element.line == zona.line && element.column == zona.column) {
+        if (element.comBomba()) {
+          return true;
+        }
+        return false;
+      }
+    }
+    return false;
   }
 }
