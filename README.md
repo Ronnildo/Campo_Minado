@@ -50,9 +50,16 @@ uma zona indicando que a mesma contém uma bomba, (ii) remover uma bandeira prev
     * A pontuação deve ser o tempo  
 ## Casos de Teste
 Nos casos de teste foram utilizados técnicas de teste de:
- * unidade
+ * Classe de equivalência
  * análise de valor limite.
 
+
+## Execução
+
+
+```sh
+ dart ./bin/campo_minado.dart
+```
 
 ## Implemetação
 ![codigo](./campo_minado.png)

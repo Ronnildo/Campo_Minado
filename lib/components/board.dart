@@ -86,7 +86,7 @@ class Board {
     for (var element in board) {
       a += 1;
       if (element.marca == "*") {
-        stdout.write(" [ ${element.marca} ] ");
+        stdout.write(" [ _ ] ");
       } else {
         stdout.write(" [ ${element.marca} ] ");
       }

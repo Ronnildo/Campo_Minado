@@ -18,17 +18,13 @@ void main(List<String> arguments) {
 }
 
 campoMinadoGame() {
-  stdout.write("Seu Nome: ");
-  var name = stdin.readLineSync();
-  Jogador j = Jogador(name: name!);
-
   menuNivel();
   var level = stdin.readLineSync();
   Level sel = select(level!);
   print("\n");
 
   Board b = Board(difficulty: sel);
-  Historico h = Historico(j, DateTime.now());
+  //Historico h = Historico(j, DateTime.now());
   //Uma Jogada
   Game game = Game(b);
   Zona zona;
